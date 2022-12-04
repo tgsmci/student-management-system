@@ -10,10 +10,14 @@ table, th, td {
   @apply border border-slate-400;
 }
 
-table th, td {
+table td:first-child {
+  @apply text-left;
+}
+
+table.students th, td {
   @apply px-4 py-2 text-center;
 }
 
-table td:first-child {
-  @apply text-left;
+table.payments th, td {
+  @apply px-2 py-2 text-center;
 }

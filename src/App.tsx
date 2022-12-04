@@ -12,11 +12,14 @@ function App({ base }) {
       <Header />
       <MainMenu />
       <div className="grid grid-cols-12 gap-4">
-        <div className="col-span-3 bg-blue-100">
+        <div className="col-span-2 bg-blue-100">
           <SubMenu setGradeLevel={setGradeLevel} />
         </div>
-        <div className="col-span-9 bg-green-100">
-          <Contents base={base} gradeLevel={gradeLevel} />
+        <div className="col-span-10 bg-green-100">
+          <Contents
+            base={base}
+            gradeLevel={gradeLevel}
+          />
         </div>
       </div>
     </div>
