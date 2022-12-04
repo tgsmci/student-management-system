@@ -1,25 +1,17 @@
 import { useState, useEffect } from 'react'
 import { SlButton, SlDialog } from '@shoelace-style/shoelace/dist/react'
 
-export default function ViewPayments({ student, clearActiveStudent }) {
-  const [open, setOpen] = useState(false)
-
-  useEffect(() => {
-    setOpen(student !== null)
-  }, [student])
-
-  const afterHide = () => {
-    setOpen(false)
-    clearActiveStudent()
-  }
-
+export default function ViewPayments({ student, open, onClose, onAddPayment }) {
   return (
     <SlDialog
-      label={student?.name || 'Student'}
+      label="Payments"
       open={open}
-      onSlAfterHide={afterHide}>
-      {student?.payments ?
-        (<table className="payments w-full border-collapse">
+      onSlAfterHide={onClose}>
+      <div className="bg-yellow-100 font-bold text-center p-2 mb-4">
+        {student.name}
+      </div>
+      {student?.payments ? (
+        <table className="payments w-full border-collapse">
           <thead>
             <tr>
               <th>Date</th>
@@ -38,18 +30,17 @@ export default function ViewPayments({ student, clearActiveStudent }) {
               </tr>
             ))}
           </tbody>
-        </table>) : (
-          <div className="text-center">No payments found.</div>
-        )
-      }
-      <div slot="footer" className="flex flex-row justify-end gap-2">
-        <SlButton
-          onClick={() => setOpen(false)}>
-          Add Payment
-        </SlButton>
+        </table>
+      ) : (
+        <div className="text-center">No payments found.</div>
+      )}
+      <div
+        slot="footer"
+        className="flex flex-row justify-end gap-2">
+        <SlButton onClick={onAddPayment}>Add Payment</SlButton>
         <SlButton
           variant="primary"
-          onClick={() => setOpen(false)}>
+          onClick={onClose}>
           Close
         </SlButton>
       </div>

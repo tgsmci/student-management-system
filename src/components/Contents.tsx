@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import ViewPayments from './payments/ViewPayments'
+import AddPayment from './payments/AddPayment'
 import { SlButton } from '@shoelace-style/shoelace/dist/react'
 
 export default function Contents({ base, gradeLevel }) {
   const [students, setStudents] = useState([])
-  const [activeStudent, setActiveStudent] = useState(null)
 
   useEffect(() => {
     if (gradeLevel) {
@@ -35,6 +35,20 @@ export default function Contents({ base, gradeLevel }) {
     }
   }, [gradeLevel])
 
+  const [activeStudent, setActiveStudent] = useState(null)
+  const [showPayments, setShowPayments] = useState(false)
+  const [showAddPayment, setShowAddPayment] = useState(false)
+
+  const handleViewStudent = (s) => {
+    setActiveStudent(s)
+    setShowPayments(true)
+  }
+
+  const handleAddPayment = () => {
+    setShowPayments(false)
+    setShowAddPayment(true)
+  }
+
   return (
     <div className="bg-green-100">
       {gradeLevel ? (
@@ -57,7 +71,7 @@ export default function Contents({ base, gradeLevel }) {
                   <td>P{s.currentBalance}</td>
                   <td>P{s.totalPaid}</td>
                   <td>
-                    <SlButton onClick={() => setActiveStudent(s)}>View</SlButton>
+                    <SlButton onClick={() => handleViewStudent(s)}>View</SlButton>
                   </td>
                 </tr>
               ))}
@@ -71,7 +85,14 @@ export default function Contents({ base, gradeLevel }) {
       )}
       <ViewPayments
         student={activeStudent}
-        clearActiveStudent={() => setActiveStudent(null)}
+        open={showPayments}
+        onClose={() => setShowPayments(false)}
+        onAddPayment={handleAddPayment}
+      />
+      <AddPayment
+        student={activeStudent}
+        open={showAddPayment}
+        onClose={() => setShowAddPayment(false)}
       />
     </div>
   )
