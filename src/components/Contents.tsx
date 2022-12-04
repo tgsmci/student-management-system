@@ -39,14 +39,20 @@ export default function Contents({ base, gradeLevel }) {
   const [showPayments, setShowPayments] = useState(false)
   const [showAddPayment, setShowAddPayment] = useState(false)
 
-  const handleViewStudent = (s) => {
+  const handleShowPayments = (s) => {
     setActiveStudent(s)
     setShowPayments(true)
   }
 
-  const handleAddPayment = () => {
+  const handleShowAddPayment = () => {
     setShowPayments(false)
     setShowAddPayment(true)
+  }
+
+  const handleConfirmAddPayment = (payment) => {
+    console.log(payment)
+    // todo: refetch
+    setShowAddPayment(false)
   }
 
   return (
@@ -71,7 +77,7 @@ export default function Contents({ base, gradeLevel }) {
                   <td>P{s.currentBalance}</td>
                   <td>P{s.totalPaid}</td>
                   <td>
-                    <SlButton onClick={() => handleViewStudent(s)}>View</SlButton>
+                    <SlButton onClick={() => handleShowPayments(s)}>View</SlButton>
                   </td>
                 </tr>
               ))}
@@ -87,12 +93,13 @@ export default function Contents({ base, gradeLevel }) {
         student={activeStudent}
         open={showPayments}
         onClose={() => setShowPayments(false)}
-        onAddPayment={handleAddPayment}
+        onAddPayment={handleShowAddPayment}
       />
       <AddPayment
         student={activeStudent}
         open={showAddPayment}
         onClose={() => setShowAddPayment(false)}
+        onAddPayment={handleConfirmAddPayment}
       />
     </div>
   )
