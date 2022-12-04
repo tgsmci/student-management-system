@@ -1,32 +1,24 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import Header from './components/Header'
+import MainMenu from './components/MainMenu'
+import SubMenu from './components/SubMenu'
+import Contents from './components/Contents'
 
-function App() {
-  const [count, setCount] = useState(0)
+function App({ base }) {
+  const [gradeLevel, setGradeLevel] = useState('Junior Casa')
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="container mx-auto bg-red-100">
+      <Header />
+      <MainMenu />
+      <div className="grid grid-cols-12 gap-4">
+        <div className="col-span-3 bg-blue-100">
+          <SubMenu setGradeLevel={setGradeLevel} />
+        </div>
+        <div className="col-span-9 bg-green-100">
+          <Contents base={base} gradeLevel={gradeLevel} />
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </div>
   )
 }
