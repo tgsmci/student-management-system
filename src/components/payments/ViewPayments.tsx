@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { SlButton, SlDialog } from '@shoelace-style/shoelace/dist/react'
+import { asPeso, asPHTime } from '../../utils'
 
 export default function ViewPayments({ student, open, onClose, onAddPayment }) {
   return (
@@ -23,8 +24,8 @@ export default function ViewPayments({ student, open, onClose, onAddPayment }) {
               <tbody>
                 {student.payments.map((p) => (
                   <tr key={`${p.date}:${p.amount}`}>
-                    <td>{p.date}</td>
-                    <td>P{p.amount}</td>
+                    <td>{asPHTime(p.date).toLocaleString()}</td>
+                    <td>{asPeso(p.amount)}</td>
                     <td>{p.type}</td>
                     <td>{p.notes}</td>
                   </tr>

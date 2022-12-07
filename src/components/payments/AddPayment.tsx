@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { asPeso, asPHTime, today } from '../../utils'
 import {
   SlButton,
   SlDialog,
@@ -10,22 +11,42 @@ import {
   SlRadio,
 } from '@shoelace-style/shoelace/dist/react'
 
-export default function AddPayment({ student, open, onClose }) {
-  const toISOString = (d) => d.toISOString().split('T')[0]
-  const today = toISOString(new Date())
+export default function AddPayment({ student, open, onClose, onAddPayment }) {
+  const TODAY = today.toISODate()
 
-  const [paymentDetails, setPaymentDetails] = useState({
-    date: today,
-  })
+  const DEFAULT_PAYMENT_DETAILS = {
+    date: TODAY,
+    notes: '',
+  }
 
-  const handleChange = (e) => {
+  const [paymentDetails, setPaymentDetails] = useState(DEFAULT_PAYMENT_DETAILS)
+
+  const formIsValid = () => {
+    let result = false
+    if (paymentDetails.date) {
+      if (paymentDetails.amount && paymentDetails.amount > 0) {
+        if (paymentDetails.type) {
+          result = true
+        }
+      }
+    }
+    return result
+  }
+
+  const handleInputChange = (e) => {
     setPaymentDetails({
       ...paymentDetails,
       [e.target.name]: e.target.value,
     })
   }
 
-  const handleAddPayment = () => {}
+  const handleAddPayment = () => {
+    const payment = Object.assign({}, paymentDetails)
+    payment.date = asPHTime(payment.date).toISODate()
+    payment.amount = Number.parseFloat(payment.amount)
+    payment.notes = payment.notes === '' ? null : payment.notes
+    onAddPayment(paymentDetails)
+  }
 
   return (
     <SlDialog
@@ -41,32 +62,33 @@ export default function AddPayment({ student, open, onClose }) {
                 label="Date"
                 type="date"
                 value={paymentDetails.date}
-                max={today}
+                max={TODAY}
                 name="date"
                 required
-                onSlChange={handleChange}
+                onSlChange={handleInputChange}
               />
               <SlInput
-                label="Amount (P)"
+                label="Amount"
                 placeholder="0.00"
                 type="number"
                 min="1"
                 name="amount"
                 required
-                onSlChange={handleChange}
-              />
+                onSlChange={handleInputChange}>
+                <span slot="prefix">{import.meta.env.VITE_CURRENCY_SYMBOL}</span>
+              </SlInput>
               <SlRadioGroup
                 label="Type"
                 name="type"
                 required
-                onSlChange={handleChange}>
-                <SlRadio value="cash">Cash</SlRadio>
-                <SlRadio value="check">Check</SlRadio>
+                onSlChange={handleInputChange}>
+                <SlRadio value="Cash">Cash</SlRadio>
+                <SlRadio value="Check">Check</SlRadio>
               </SlRadioGroup>
               <SlTextarea
                 label="Notes"
                 name="notes"
-                onSlChange={handleChange}
+                onSlChange={handleInputChange}
               />
             </div>
             <SlAlert
@@ -85,7 +107,8 @@ export default function AddPayment({ student, open, onClose }) {
             className="flex flex-row justify-end gap-2">
             <SlButton
               variant="primary"
-              onClick={handleAddPayment}>
+              onClick={handleAddPayment}
+              disabled={!formIsValid()}>
               Add Payment
             </SlButton>
             <SlButton onClick={onClose}>Cancel</SlButton>

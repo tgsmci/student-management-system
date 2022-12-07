@@ -2,19 +2,31 @@ import { useEffect, useState } from 'react'
 import ViewPayments from './payments/ViewPayments'
 import AddPayment from './payments/AddPayment'
 import { SlButton } from '@shoelace-style/shoelace/dist/react'
+import { asPeso } from '../utils'
 
 export default function Contents({ base, gradeLevel }) {
   const [students, setStudents] = useState([])
 
   useEffect(() => {
     if (gradeLevel) {
-      base('Ledgers')
+      base('Students')
         .select({
-          fields: ['_Student', 'Starting Balance', 'Current Balance', 'Total Paid', 'Payments'],
+          fields: [
+            'First Name',
+            'Last Name',
+            'Starting Balance',
+            'Current Balance',
+            'Total Paid',
+            'Payments',
+          ],
           filterByFormula: `{Grade Level} = '${gradeLevel}'`,
           sort: [
             {
-              field: '_Student',
+              field: 'Last Name',
+              direction: 'asc',
+            },
+            {
+              field: 'First Name',
               direction: 'asc',
             },
           ],
@@ -24,7 +36,7 @@ export default function Contents({ base, gradeLevel }) {
 
           setStudents(
             records.map((r) => ({
-              name: r.fields._Student[0],
+              name: `${r.fields['Last Name']}, ${r.fields['First Name']}`,
               startingBalance: parseFloat(r.fields['Starting Balance']) || 0,
               currentBalance: parseFloat(r.fields['Current Balance']) || 0,
               totalPaid: parseFloat(r.fields['Total Paid']) || 0,
@@ -49,10 +61,10 @@ export default function Contents({ base, gradeLevel }) {
     setShowAddPayment(true)
   }
 
-  const handleConfirmAddPayment = (payment) => {
-    console.log(payment)
-    // todo: refetch
+  const handleAddPayment = (payment) => {
+    activeStudent.payments.push(payment)
     setShowAddPayment(false)
+    setShowPayments(true)
   }
 
   return (
@@ -73,9 +85,9 @@ export default function Contents({ base, gradeLevel }) {
               {students.map((s) => (
                 <tr key={s.name}>
                   <td>{s.name}</td>
-                  <td>P{s.startingBalance}</td>
-                  <td>P{s.currentBalance}</td>
-                  <td>P{s.totalPaid}</td>
+                  <td>{asPeso(s.startingBalance)}</td>
+                  <td>{asPeso(s.currentBalance)}</td>
+                  <td>{asPeso(s.totalPaid)}</td>
                   <td>
                     <SlButton onClick={() => handleShowPayments(s)}>View</SlButton>
                   </td>
@@ -99,7 +111,8 @@ export default function Contents({ base, gradeLevel }) {
         student={activeStudent}
         open={showAddPayment}
         onClose={() => setShowAddPayment(false)}
-        onAddPayment={handleConfirmAddPayment}
+        onAddPayment={handleAddPayment}
+        key={showAddPayment}
       />
     </div>
   )
